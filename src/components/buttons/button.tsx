@@ -1,10 +1,10 @@
-import React from "react";
+import React, { ReactElement } from "react";
+import getClassNames from "../../utils/getClassNames";
 
-const Button = ({ value }: { value: string }) => {
-  let classnames = '';
-
+const Button = ({ value }: { value: string }): ReactElement => {
+  const classnames = getClassNames(value);
   return (
-    <button className="rounded-full col-span-3 bg-gray-800 w-20 h-20 text-white text-2xl px-5 py-5 hover:bg-gray-400">
+    <button className={`rounded-full text-white text-4xl px-5 py-5 hover:bg-opacity-40 hover:transition-none transition duration-1000 active:translate-x-1 active:translate-y-1   ${classnames}`}>
       {value}
     </button>
   );
