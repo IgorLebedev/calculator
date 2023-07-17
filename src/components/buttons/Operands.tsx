@@ -3,7 +3,7 @@ import useStore from "../../store/store";
 
 const Operands = () => {
   const add = useStore((store) => store.addSymbol);
-  const classNames  = 'w-20 h-20 rounded-full bg-grey-dark col-span-1 text-white text-4xl hover:bg-opacity-40 hover:transition-none transition duration-1000 active:translate-x-0.5 active:translate-y-0.5'
+  const classNames  = 'w-20 h-20 rounded-full bg-grey-dark col-span-1 text-slate-200 text-4xl hover:bg-grey-darkHover hover:transition-none transition duration-1000 active:translate-x-0.5 active:translate-y-0.5'
   return (
     <div className="grid grid-cols-3 gap-3.5 col-span-9 row-span-4">
       <button
