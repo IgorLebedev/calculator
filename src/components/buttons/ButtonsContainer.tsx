@@ -3,7 +3,7 @@ import Operands from "./Operands";
 import Operators from "./Operators";
 import Utilites from "./Utilities";
 
-const ButtonsContainer = ({ setInput }: { setInput: React.Dispatch<React.SetStateAction<string>> }): ReactElement => {
+const ButtonsContainer = (): ReactElement => {
   return (
     <div className="container grid grid-cols-12 gap-3.5 px-4 py-4">
       <Utilites />
