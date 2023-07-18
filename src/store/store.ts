@@ -5,6 +5,7 @@ type State = {
   hasComma: boolean,
   firstOperand: string,
   secondOperand: string,
+  buffer: string | null,
   operator: string | null,
 }
 
@@ -12,6 +13,9 @@ type Action = {
   addSymbol: (num: string) => void,
   remove: () => void,
   setOperator: (operator: string) => void,
+  equals: () => void,
+  // minus: () => void,
+  // percent: () => void,
 }
 
 const useStore = create<State & Action>((set) => ({
@@ -19,8 +23,10 @@ const useStore = create<State & Action>((set) => ({
   hasComma: false,
   firstOperand: '0',
   secondOperand: '0',
+  buffer: null,
   operator: null,
   addSymbol: (num: string) => set((state) => {
+    console.log(state)
     if (num === '0' && state.isFirstZero) {
       return state;
     }
@@ -40,7 +46,7 @@ const useStore = create<State & Action>((set) => ({
         isFirstZero: false,
       }
     }
-    if (state.operator) {
+    if (state.operator !== null) {
       if (state.secondOperand.length === 1 && state.secondOperand[0] === '0') {
         return {
           secondOperand: num,
@@ -79,9 +85,45 @@ const useStore = create<State & Action>((set) => ({
     }
     return {
       operator,
+      secondOperand: '0',
+      buffer: null,
       isFirstZero: true,
       hasComma: false,
     }
+  }),
+  equals: () => set((state) => {
+    if (!state.buffer && !state.operator) {
+      return state;
+    }
+    const first = Number(state.firstOperand.includes(',') ? state.firstOperand.replace(',','.') : state.firstOperand);
+    const second = Number(state.secondOperand.includes(',') ? state.secondOperand.replace(',','.') : state.secondOperand);
+    console.log(state);
+    let temp;
+    switch (state.buffer ?? state.operator) {
+      case '+':
+        temp = first + second;
+        break;
+      case '-':
+        temp = first - second;
+        break;
+      case '*':
+        temp = first * second;
+        break;
+      case '/':
+        temp = first / second;
+        break;  
+    };
+    const tempStr = String(temp);
+    const result = tempStr.includes('.') ? tempStr.replace('.', ',') : tempStr;
+    return state.buffer
+    ? {
+      firstOperand: result,
+    }
+    : {
+      firstOperand: result,
+      buffer: state.operator,
+      operator: null,
+    };
   }),
 }));
 
