@@ -6,3 +6,9 @@
   font-family: 'san-francisco';
   src: url('../public/fonts/SF-Pro-Display-Light.otf');
 }
+
+@layer components {
+  .btn-anim {
+    @apply hover:transition-none transition duration-500 active:translate-x-0.5 active:translate-y-0.5;
+  }
+}
