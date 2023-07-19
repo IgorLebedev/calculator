@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import useStore from "../store/store";
 
 const Input = () => {
@@ -8,9 +8,9 @@ const Input = () => {
     }
     return store.firstOperand;
   });
-  console.log(input)
+  const fontSizing = input.length > 6 ? 'text-6xl' : 'text-7xl';
   return (
-    <div className="relative grow text-7xl bg-transparent">
+    <div className={`relative grow font-thin bg-transparent ${fontSizing}`}>
       <input
         className="absolute bottom-0 bg-transparent text-white w-full h-auto pb-0 pt-10 px-8 outline-none text-right"
         type="text"
