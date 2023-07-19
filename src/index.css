@@ -4,8 +4,34 @@
 
 @font-face {
   font-family: 'san-francisco';
-  src: url('../public/fonts/SF-Pro-Display-Light.otf');
+  font-weight: 100;
+  src: url('../public/fonts/SFUIDisplay-Thin.otf');
 }
+
+@font-face {
+  font-family: 'san-francisco';
+  font-weight: 300;
+  src: url('../public/fonts/SFUIDisplay-Light.ttf');
+}
+
+@font-face {
+  font-family: 'san-francisco';
+  font-weight: 400;
+  src: url('../public/fonts/SFUIDisplay-Regular.otf');
+}
+
+@font-face {
+  font-family: 'san-francisco';
+  font-weight: 500;
+  src: url('../public/fonts/SFUIDisplay-Medium.otf');
+}
+
+@font-face {
+  font-family: 'san-francisco';
+  font-weight: 600;
+  src: url('../public/fonts/SFUIDisplay-Semibold.otf');
+}
+
 
 @layer components {
   .btn-anim {
