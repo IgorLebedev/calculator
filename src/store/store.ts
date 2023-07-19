@@ -13,8 +13,8 @@ type Action = {
   addSymbol: (num: string) => void,
   remove: () => void,
   setOperator: (operator: string) => void,
+  minus: () => void,
   equals: () => void,
-  // minus: () => void,
   // percent: () => void,
 }
 
@@ -27,7 +27,7 @@ const useStore = create<State & Action>((set) => ({
   operator: null,
   addSymbol: (num: string) => set((state) => {
     console.log(state)
-    if (num === '0' && state.isFirstZero) {
+    if (num === '0' && state.isFirstZero && !state.operator) {
       return state;
     }
     if (num === ',') {
@@ -46,10 +46,16 @@ const useStore = create<State & Action>((set) => ({
         isFirstZero: false,
       }
     }
-    if (state.operator !== null) {
+    if (state.operator) {
       if (state.secondOperand.length === 1 && state.secondOperand[0] === '0') {
         return {
           secondOperand: num,
+          isFirstZero: false,
+        };
+      }
+      if (state.secondOperand[0] === '-' && state.secondOperand[1] === '0') {
+        return {
+          secondOperand: `-${num}`,
           isFirstZero: false,
         };
       }
@@ -64,20 +70,24 @@ const useStore = create<State & Action>((set) => ({
         isFirstZero: false,
       };
     }
+    if (state.firstOperand[0] === '-' && state.firstOperand[1] === '0') {
+      return {
+        firstOperand: `-${num}`,
+        isFirstZero: false,
+      };
+    }
     return {
       firstOperand: `${state.firstOperand}${num}`,
       isFirstZero: false,
     };
   }),
-  remove: () => set((state) => {
-    console.log(state);
-    return {
+  remove: () => set(() => ({
       firstOperand: '0',
       secondOperand: '0',
       hasComma: false,
+      buffer: null,
       isFirstZero: true,
-    }
-  }
+    })
   ),
   setOperator: (operator: string) => set((state) => {
     if (state.operator === operator ) {
@@ -89,6 +99,24 @@ const useStore = create<State & Action>((set) => ({
       buffer: null,
       isFirstZero: true,
       hasComma: false,
+    }
+  }),
+  minus: () => set((state) => {
+    if (state.operator) {
+      if (state.secondOperand.startsWith('-')) {
+        return { secondOperand: state.secondOperand.slice(1) }
+      }
+      return { 
+        secondOperand: `-${state.secondOperand}`,
+        isFirstZero: false,
+      }
+    }
+    if (state.firstOperand.startsWith('-')) {
+      return { firstOperand: state.firstOperand.slice(1) }
+    }
+    return {
+      firstOperand: `-${state.firstOperand}`,
+      isFirstZero: false,
     }
   }),
   equals: () => set((state) => {
@@ -115,6 +143,7 @@ const useStore = create<State & Action>((set) => ({
     };
     const tempStr = String(temp);
     const result = tempStr.includes('.') ? tempStr.replace('.', ',') : tempStr;
+    
     return state.buffer
     ? {
       firstOperand: result,
