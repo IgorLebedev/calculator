@@ -1,4 +1,7 @@
 import { create } from "zustand";
+import fixNumber from "../utils/mathFixedEightAfterDot";
+import commaReplacer from "../utils/commaReplacer";
+import dotReplacer from "../utils/dotReplacer";
 
 type State = {
   isFirstZero: boolean,
@@ -15,7 +18,7 @@ type Action = {
   setOperator: (operator: string) => void,
   minus: () => void,
   equals: () => void,
-  // percent: () => void,
+  percent: () => void,
 }
 
 const useStore = create<State & Action>((set) => ({
@@ -34,19 +37,29 @@ const useStore = create<State & Action>((set) => ({
       if (state.hasComma) {
         return state;
       }
-      return state.operator
-      ? {
-        secondOperand: `${state.secondOperand}${num}`,
-        hasComma: true,
-        isFirstZero: false,
+      if (state.operator) {
+        if (state.secondOperand.split('').filter(symbol => symbol !== '-').join('').length > 8) {
+          return state;
+        }
+        return {
+          secondOperand: `${state.secondOperand}${num}`,
+          hasComma: true,
+          isFirstZero: false,
+        }
       }
-      : {
+      if (state.firstOperand.split('').filter(symbol => symbol !== '-').join('').length > 8) {
+        return state;
+      }
+      return {
         firstOperand: `${state.firstOperand}${num}`,
         hasComma: true,
         isFirstZero: false,
       }
     }
     if (state.operator) {
+      if (state.secondOperand.split('').filter(symbol => symbol !== '-' && symbol !== ',').join('').length > 8) {
+        return state;
+      }
       if (state.secondOperand.length === 1 && state.secondOperand[0] === '0') {
         return {
           secondOperand: num,
@@ -63,6 +76,9 @@ const useStore = create<State & Action>((set) => ({
         secondOperand: `${state.secondOperand}${num}`,
         isFirstZero: false,
       }
+    }
+    if (state.firstOperand.split('').filter(symbol => symbol !== '-' && symbol !== ',').join('').length > 8) {
+      return state;
     }
     if (state.firstOperand.length === 1 && state.firstOperand[0] === '0') {
       return {
@@ -119,12 +135,23 @@ const useStore = create<State & Action>((set) => ({
       isFirstZero: false,
     }
   }),
+  percent: () => set((state) => {
+    if (!state.operator) {
+      const divided = Number(commaReplacer(state.firstOperand)) / 100; 
+      const tempStr = String(divided);
+      const result = dotReplacer(tempStr);
+      return {
+        firstOperand: result,
+      }
+    }
+    return state;
+  }),
   equals: () => set((state) => {
     if (!state.buffer && !state.operator) {
       return state;
     }
-    const first = Number(state.firstOperand.includes(',') ? state.firstOperand.replace(',','.') : state.firstOperand);
-    const second = Number(state.secondOperand.includes(',') ? state.secondOperand.replace(',','.') : state.secondOperand);
+    const first = Number(commaReplacer(state.firstOperand));
+    const second = Number(commaReplacer(state.secondOperand));
     console.log(state);
     let temp;
     switch (state.buffer ?? state.operator) {
@@ -141,8 +168,9 @@ const useStore = create<State & Action>((set) => ({
         temp = first / second;
         break;  
     };
-    const tempStr = String(temp);
-    const result = tempStr.includes('.') ? tempStr.replace('.', ',') : tempStr;
+    const fixed = fixNumber(temp);
+    const tempStr = String(fixed);
+    const result = dotReplacer(tempStr);
     
     return state.buffer
     ? {
